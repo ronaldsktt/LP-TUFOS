@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { PixCheckout } from "../components/PixCheckout";
 import { CLONE_BODY, CLONE_CSS } from "../clone-data";
 const reviewImages = [
   "/clones/cmueqtwv600w5xt5bgb4bp3h3/reviews/dep02.jpg",
@@ -76,6 +77,8 @@ export const Route = createFileRoute("/")({
 });
 
 function ClonePage() {
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+
   useEffect(() => {
     const videos = Array.from(document.querySelectorAll<HTMLVideoElement>("video"));
     const handlers: Array<[HTMLElement, (e: Event) => void]> = [];
@@ -128,13 +131,11 @@ function ClonePage() {
       clickTarget.style.cursor = "pointer";
     }
 
-    // Carousel indicators: highlight the dot of the card currently in view
     const carousels = Array.from(document.querySelectorAll<HTMLElement>(".snap-x"));
     const scrollCleanups: Array<() => void> = [];
     for (const carousel of carousels) {
       const cards = Array.from(carousel.querySelectorAll<HTMLElement>(".snap-center"));
       if (!cards.length) continue;
-      // find the dots container (sibling with the bar indicators)
       let dotsContainer: HTMLElement | null = null;
       let node: Element | null = carousel;
       for (let i = 0; i < 4 && node; i++) {
@@ -184,7 +185,6 @@ function ClonePage() {
       scrollCleanups.push(() => carousel.removeEventListener("scroll", onScroll));
     }
 
-    // Customer reviews: arrows, dots and the phone image stay in sync.
     const reviewImage = document.querySelector<HTMLImageElement>("[data-review-image]");
     if (reviewImage) {
       const reviewSection = reviewImage.closest("section");
@@ -226,7 +226,6 @@ function ClonePage() {
       scrollCleanups.push(() => nextButton?.removeEventListener("click", showNext));
     }
 
-    // Cronômetros: contagem regressiva a partir de 00:19:35
     const timerSpans = Array.from(
       document.querySelectorAll<HTMLElement>("span.tabular-v2.text-gold-grad"),
     ).filter((s) => /^\d{2}$/.test((s.textContent ?? "").trim()));
@@ -255,6 +254,21 @@ function ClonePage() {
     }, 1000);
     scrollCleanups.push(() => window.clearInterval(timerId));
 
+    const openCheckout = (event: Event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setCheckoutOpen(true);
+    };
+    const buyButtons = Array.from(document.querySelectorAll<HTMLElement>(".btn-compra"));
+    for (const button of buyButtons) {
+      button.addEventListener("click", openCheckout);
+      if (button instanceof HTMLAnchorElement) {
+        button.removeAttribute("target");
+        button.setAttribute("href", "#comprar");
+      }
+      scrollCleanups.push(() => button.removeEventListener("click", openCheckout));
+    }
+
     return () => {
       for (const [element, handler] of handlers) element.removeEventListener("click", handler);
       for (const cleanup of scrollCleanups) cleanup();
@@ -262,6 +276,9 @@ function ClonePage() {
   }, []);
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: `<style>${CLONE_CSS}</style>${PAGE_BODY}` }} />
+    <>
+      <div dangerouslySetInnerHTML={{ __html: `<style>${CLONE_CSS}</style>${PAGE_BODY}` }} />
+      <PixCheckout open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
+    </>
   );
 }
