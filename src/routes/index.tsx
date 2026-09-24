@@ -11,6 +11,25 @@ const reviewImages = [
   "/clones/cmueqtwv600w5xt5bgb4bp3h3/reviews/dep08.jpg",
 ];
 
+function withoutEssencialPlan(html: string) {
+  const cardStart = html.indexOf(
+    '<div class="relative rounded-xl bg-[#0a0a0a] ring-1 ring-white/10 transition hover:-translate-y-0.5 p-7 lg:p-9 flex flex-col"',
+  );
+  const sectionClose = html.indexOf("</section>", cardStart);
+  if (cardStart === -1 || sectionClose === -1) return html;
+
+  return (
+    html.slice(0, cardStart) +
+    "</div></div></section>" +
+    html.slice(sectionClose + "</section>".length)
+  ).replace(
+    "mt-14 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-5 lg:gap-6 items-stretch",
+    "mt-14 grid grid-cols-1 max-w-xl mx-auto gap-5 items-stretch",
+  );
+}
+
+const PAGE_BODY = withoutEssencialPlan(CLONE_BODY);
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -243,6 +262,6 @@ function ClonePage() {
   }, []);
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: `<style>${CLONE_CSS}</style>${CLONE_BODY}` }} />
+    <div dangerouslySetInnerHTML={{ __html: `<style>${CLONE_CSS}</style>${PAGE_BODY}` }} />
   );
 }
