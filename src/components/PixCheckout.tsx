@@ -39,6 +39,7 @@ const inputStyle: CSSProperties = {
   fontSize: 15,
   lineHeight: "20px",
   outline: "none",
+  textAlign: "center",
   fontFamily: "Inter, system-ui, sans-serif",
 };
 
@@ -192,7 +193,7 @@ export function PixCheckout({ open, onClose }: Props) {
           boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
           padding: "28px 24px 22px",
           color: "#fff",
-          textAlign: "left",
+          textAlign: "center",
         }}
         onClick={(event) => event.stopPropagation()}
       >
@@ -219,35 +220,35 @@ export function PixCheckout({ open, onClose }: Props) {
 
         {step === "form" && (
           <form onSubmit={(event) => void submit(event)} style={{ display: "grid", gap: 16 }}>
-            <div style={{ paddingRight: 28 }}>
-              <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700, color: "#fff" }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700, color: "#fff", textAlign: "center" }}>
                 Falta pouco pra entrar!
               </h2>
-              <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)" }}>
+              <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)", textAlign: "center" }}>
                 Vamos enviar seu acesso no e-mail e WhatsApp informados.
               </p>
             </div>
 
             <label style={{ display: "grid", gap: 8 }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "center" }}>
                 E-mail
               </span>
               <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="seu@email.com" style={inputStyle} />
             </label>
 
             <label style={{ display: "grid", gap: 8 }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "center" }}>
                 WhatsApp (com DDD)
               </span>
               <input required inputMode="tel" value={phone} onChange={(event) => setPhone(maskPhone(event.target.value))} placeholder="(11) 99999-9999" style={inputStyle} />
             </label>
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: 15, color: "rgba(255,255,255,0.72)" }}>Total</span>
+            <div style={{ textAlign: "center" }}>
+              <span style={{ fontSize: 15, color: "rgba(255,255,255,0.72)" }}>Total </span>
               <span style={{ fontSize: 20, fontWeight: 700, color: "#f5c14a" }}>{PRODUCT_PRICE}</span>
             </div>
 
-            {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5" }}>{error}</p> : null}
+            {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5", textAlign: "center" }}>{error}</p> : null}
             <GoldButton type="submit" disabled={loading}>{loading ? "Gerando Pix..." : "Gerar Pix"}</GoldButton>
             <p style={{ margin: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 11, color: "rgba(255,255,255,0.42)", textAlign: "center" }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -260,18 +261,18 @@ export function PixCheckout({ open, onClose }: Props) {
         )}
 
         {step === "pix" && (
-          <div style={{ display: "grid", gap: 16 }}>
-            <div style={{ paddingRight: 28 }}>
-              <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700 }}>Pague com Pix</h2>
-              <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)" }}>
+          <div style={{ display: "grid", gap: 16, textAlign: "center" }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700, textAlign: "center" }}>Pague com Pix</h2>
+              <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)", textAlign: "center" }}>
                 Escaneie o QR Code ou copie o código para concluir o pagamento de {PRODUCT_PRICE}.
               </p>
             </div>
             {qrUrl ? <img src={qrUrl} alt="QR Code Pix" style={{ width: 208, height: 208, margin: "0 auto", borderRadius: 12, background: "#fff", padding: 8 }} /> : null}
-            <textarea readOnly value={pixCode} style={{ width: "100%", height: 88, resize: "none", borderRadius: 10, border: "1px solid #2b3648", background: "#0b1220", color: "rgba(255,255,255,0.8)", padding: 12, fontSize: 11, fontFamily: "Inter, system-ui, sans-serif" }} />
+            <textarea readOnly value={pixCode} style={{ width: "100%", height: 88, resize: "none", borderRadius: 10, border: "1px solid #2b3648", background: "#0b1220", color: "rgba(255,255,255,0.8)", padding: 12, fontSize: 11, textAlign: "center", fontFamily: "Inter, system-ui, sans-serif" }} />
             <GoldButton onClick={() => void copyPix()}>{copied ? "Código copiado" : "Copiar código Pix"}</GoldButton>
             <p style={{ margin: 0, textAlign: "center", fontSize: 12, color: "rgba(245,193,74,0.85)" }}>Aguardando pagamento...</p>
-            {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5" }}>{error}</p> : null}
+            {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5", textAlign: "center" }}>{error}</p> : null}
           </div>
         )}
 
