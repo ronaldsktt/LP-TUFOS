@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 const PRODUCT_AMOUNT = 23.99;
 const PRODUCT_CURRENCY = "BRL";
 
+export type MetaEventName = "PageView" | "ViewContent" | "InitiateCheckout" | "Purchase";
+
 function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
@@ -48,10 +50,10 @@ export async function sendMetaEvent({
   fbc,
   sourceUrl,
 }: {
-  eventName: "InitiateCheckout" | "Purchase";
+  eventName: MetaEventName;
   eventId: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   clientIp?: string;
   userAgent?: string;
   fbp?: string;
@@ -63,9 +65,15 @@ export async function sendMetaEvent({
   if (!pixelId || !token) return { skipped: true as const };
 
   const userData: Record<string, unknown> = {
-    em: [sha256(normalizeEmail(email))],
-    ph: [sha256(normalizePhone(phone))],
+    country: [sha256("br")],
   };
+
+  if (email) {
+    const normalized = normalizeEmail(email);
+    userData.em = [sha256(normalized)];
+    userData.external_id = [sha256(normalized)];
+  }
+  if (phone) userData.ph = [sha256(normalizePhone(phone))];
   if (clientIp) userData.client_ip_address = clientIp;
   if (userAgent) userData.client_user_agent = userAgent;
   if (fbp) userData.fbp = fbp;
@@ -87,6 +95,7 @@ export async function sendMetaEvent({
           value: PRODUCT_AMOUNT,
           content_name: "Biblioteca VIP",
           content_type: "product",
+          content_ids: ["biblioteca-vip"],
         },
       },
     ],
