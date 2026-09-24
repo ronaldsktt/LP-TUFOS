@@ -39,7 +39,7 @@ const inputStyle: CSSProperties = {
   fontSize: 15,
   lineHeight: "20px",
   outline: "none",
-  textAlign: "center",
+  textAlign: "left",
   fontFamily: "Inter, system-ui, sans-serif",
 };
 
@@ -193,7 +193,7 @@ export function PixCheckout({ open, onClose }: Props) {
           boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
           padding: "28px 24px 22px",
           color: "#fff",
-          textAlign: "center",
+          textAlign: "left",
         }}
         onClick={(event) => event.stopPropagation()}
       >
@@ -229,22 +229,22 @@ export function PixCheckout({ open, onClose }: Props) {
               </p>
             </div>
 
-            <label style={{ display: "grid", gap: 8 }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "center" }}>
+            <label style={{ display: "grid", gap: 8, textAlign: "left" }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "left" }}>
                 E-mail
               </span>
-              <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="seu@email.com" style={inputStyle} />
+              <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="voce@email.com" style={inputStyle} />
             </label>
 
-            <label style={{ display: "grid", gap: 8 }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "center" }}>
+            <label style={{ display: "grid", gap: 8, textAlign: "left" }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "left" }}>
                 WhatsApp (com DDD)
               </span>
-              <input required inputMode="tel" value={phone} onChange={(event) => setPhone(maskPhone(event.target.value))} placeholder="(11) 99999-9999" style={inputStyle} />
+              <input required inputMode="tel" value={phone} onChange={(event) => setPhone(maskPhone(event.target.value))} placeholder="(11) 98765-4321" style={inputStyle} />
             </label>
 
-            <div style={{ textAlign: "center" }}>
-              <span style={{ fontSize: 15, color: "rgba(255,255,255,0.72)" }}>Total </span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: 15, color: "rgba(255,255,255,0.72)" }}>Total</span>
               <span style={{ fontSize: 20, fontWeight: 700, color: "#f5c14a" }}>{PRODUCT_PRICE}</span>
             </div>
 
@@ -261,7 +261,7 @@ export function PixCheckout({ open, onClose }: Props) {
         )}
 
         {step === "pix" && (
-          <div style={{ display: "grid", gap: 16, textAlign: "center" }}>
+          <div style={{ display: "grid", gap: 16 }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700, textAlign: "center" }}>Pague com Pix</h2>
               <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)", textAlign: "center" }}>
@@ -269,7 +269,7 @@ export function PixCheckout({ open, onClose }: Props) {
               </p>
             </div>
             {qrUrl ? <img src={qrUrl} alt="QR Code Pix" style={{ width: 208, height: 208, margin: "0 auto", borderRadius: 12, background: "#fff", padding: 8 }} /> : null}
-            <textarea readOnly value={pixCode} style={{ width: "100%", height: 88, resize: "none", borderRadius: 10, border: "1px solid #2b3648", background: "#0b1220", color: "rgba(255,255,255,0.8)", padding: 12, fontSize: 11, textAlign: "center", fontFamily: "Inter, system-ui, sans-serif" }} />
+            <textarea readOnly value={pixCode} style={{ width: "100%", height: 88, resize: "none", borderRadius: 10, border: "1px solid #2b3648", background: "#0b1220", color: "rgba(255,255,255,0.8)", padding: 12, fontSize: 11, textAlign: "left", fontFamily: "Inter, system-ui, sans-serif" }} />
             <GoldButton onClick={() => void copyPix()}>{copied ? "Código copiado" : "Copiar código Pix"}</GoldButton>
             <p style={{ margin: 0, textAlign: "center", fontSize: 12, color: "rgba(245,193,74,0.85)" }}>Aguardando pagamento...</p>
             {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5", textAlign: "center" }}>{error}</p> : null}
