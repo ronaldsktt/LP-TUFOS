@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createCashIn } from "../../lib/syncpay";
 
 const PRODUCT_AMOUNT = 23.99;
-const PRODUCT_DESCRIPTION = "Biblioteca VIP - Acesso vitalício";
 
 function digits(value: string) {
   return value.replace(/\D/g, "");
@@ -31,7 +30,7 @@ export const Route = createFileRoute("/api/pix/create")({
           const origin = new URL(request.url).origin;
           const result = await createCashIn({
             amount: PRODUCT_AMOUNT,
-            description: PRODUCT_DESCRIPTION,
+            description: `Biblioteca VIP | ${email} | ${phone}`,
             webhookUrl: `${origin}/api/pix/webhook`,
           });
 
