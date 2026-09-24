@@ -28,6 +28,20 @@ function maskPhone(value: string) {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  height: 48,
+  borderRadius: 10,
+  border: "1px solid #2b3648",
+  background: "#0b1220",
+  color: "#fff",
+  padding: "0 14px",
+  fontSize: 15,
+  lineHeight: "20px",
+  outline: "none",
+  fontFamily: "Inter, system-ui, sans-serif",
+};
+
 function GoldButton({
   children,
   disabled,
@@ -44,8 +58,21 @@ function GoldButton({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-bold uppercase tracking-wide text-[#1a0a00] disabled:opacity-60"
-      style={GOLD_BUTTON_STYLE}
+      style={{
+        ...GOLD_BUTTON_STYLE,
+        width: "100%",
+        height: 48,
+        border: 0,
+        borderRadius: 12,
+        color: "#1a0a00",
+        fontSize: 15,
+        fontWeight: 700,
+        letterSpacing: "0.04em",
+        textTransform: "uppercase",
+        cursor: disabled ? "default" : "pointer",
+        opacity: disabled ? 0.6 : 1,
+        fontFamily: "Inter, system-ui, sans-serif",
+      }}
     >
       {children}
     </button>
@@ -143,45 +170,95 @@ export function PixCheckout({ open, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/75 p-4"
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 80,
+        display: "grid",
+        placeItems: "center",
+        background: "rgba(0,0,0,0.78)",
+        padding: 16,
+        fontFamily: "Inter, system-ui, sans-serif",
+      }}
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-[420px] rounded-2xl border border-[#2a3344] bg-[#0f1724] px-6 pb-6 pt-5 text-white shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+        style={{
+          position: "relative",
+          width: "min(100%, 400px)",
+          borderRadius: 18,
+          background: "#101828",
+          border: "1px solid #2a3344",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
+          padding: "28px 24px 22px",
+          color: "#fff",
+          textAlign: "left",
+        }}
         onClick={(event) => event.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 text-xl leading-none text-white/55 hover:text-white"
           aria-label="Fechar"
+          style={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            width: 28,
+            height: 28,
+            border: 0,
+            background: "transparent",
+            color: "rgba(255,255,255,0.55)",
+            fontSize: 22,
+            lineHeight: "28px",
+            cursor: "pointer",
+          }}
         >
           ×
         </button>
 
         {step === "form" && (
-          <form onSubmit={(event) => void submit(event)} className="space-y-4">
-            <div className="pr-6">
-              <h2 className="text-[22px] font-semibold leading-tight text-white">Falta pouco pra entrar!</h2>
-              <p className="mt-2 text-[13px] leading-relaxed text-white/60">
+          <form onSubmit={(event) => void submit(event)} style={{ display: "grid", gap: 16 }}>
+            <div style={{ paddingRight: 28 }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 24,
+                  lineHeight: "30px",
+                  fontWeight: 700,
+                  color: "#fff",
+                }}
+              >
+                Falta pouco pra entrar!
+              </h2>
+              <p
+                style={{
+                  margin: "8px 0 0",
+                  fontSize: 14,
+                  lineHeight: "20px",
+                  color: "rgba(255,255,255,0.62)",
+                }}
+              >
                 Vamos enviar seu acesso no e-mail e WhatsApp informados.
               </p>
             </div>
 
-            <label className="block space-y-1.5">
-              <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-white/55">E-mail</span>
+            <label style={{ display: "grid", gap: 8 }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
+                E-mail
+              </span>
               <input
                 required
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="h-12 w-full rounded-lg border border-[#2b3648] bg-[#0b1220] px-3 text-sm text-white outline-none transition focus:border-amber-400"
                 placeholder="seu@email.com"
+                style={inputStyle}
               />
             </label>
 
-            <label className="block space-y-1.5">
-              <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-white/55">
+            <label style={{ display: "grid", gap: 8 }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
                 WhatsApp (com DDD)
               </span>
               <input
@@ -189,23 +266,34 @@ export function PixCheckout({ open, onClose }: Props) {
                 inputMode="tel"
                 value={phone}
                 onChange={(event) => setPhone(maskPhone(event.target.value))}
-                className="h-12 w-full rounded-lg border border-[#2b3648] bg-[#0b1220] px-3 text-sm text-white outline-none transition focus:border-amber-400"
                 placeholder="(11) 99999-9999"
+                style={inputStyle}
               />
             </label>
 
-            <div className="flex items-center justify-between pt-1 text-sm">
-              <span className="text-white/70">Total</span>
-              <span className="text-lg font-semibold text-amber-400">{PRODUCT_PRICE}</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: 15, color: "rgba(255,255,255,0.72)" }}>Total</span>
+              <span style={{ fontSize: 20, fontWeight: 700, color: "#f5c14a" }}>{PRODUCT_PRICE}</span>
             </div>
 
-            {error ? <p className="text-sm text-red-300">{error}</p> : null}
+            {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5" }}>{error}</p> : null}
 
             <GoldButton type="submit" disabled={loading}>
               {loading ? "Gerando Pix..." : "Gerar Pix"}
             </GoldButton>
 
-            <p className="flex items-center justify-center gap-1.5 pt-1 text-center text-[11px] text-white/40">
+            <p
+              style={{
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                fontSize: 11,
+                color: "rgba(255,255,255,0.42)",
+                textAlign: "center",
+              }}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -216,10 +304,10 @@ export function PixCheckout({ open, onClose }: Props) {
         )}
 
         {step === "pix" && (
-          <div className="space-y-4 text-center">
-            <div className="pr-6 text-left">
-              <h2 className="text-[22px] font-semibold leading-tight text-white">Pague com Pix</h2>
-              <p className="mt-2 text-[13px] leading-relaxed text-white/60">
+          <div style={{ display: "grid", gap: 16 }}>
+            <div style={{ paddingRight: 28 }}>
+              <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700 }}>Pague com Pix</h2>
+              <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)" }}>
                 Escaneie o QR Code ou copie o código para concluir o pagamento de {PRODUCT_PRICE}.
               </p>
             </div>
@@ -227,26 +315,39 @@ export function PixCheckout({ open, onClose }: Props) {
               <img
                 src={qrUrl}
                 alt="QR Code Pix"
-                className="mx-auto h-52 w-52 rounded-xl bg-white p-2"
+                style={{ width: 208, height: 208, margin: "0 auto", borderRadius: 12, background: "#fff", padding: 8 }}
               />
             ) : null}
             <textarea
               readOnly
               value={pixCode}
-              className="h-24 w-full resize-none rounded-lg border border-[#2b3648] bg-[#0b1220] p-3 text-[11px] text-white/80"
+              style={{
+                width: "100%",
+                height: 88,
+                resize: "none",
+                borderRadius: 10,
+                border: "1px solid #2b3648",
+                background: "#0b1220",
+                color: "rgba(255,255,255,0.8)",
+                padding: 12,
+                fontSize: 11,
+                fontFamily: "Inter, system-ui, sans-serif",
+              }}
             />
             <GoldButton onClick={() => void copyPix()}>
               {copied ? "Código copiado" : "Copiar código Pix"}
             </GoldButton>
-            <p className="text-xs text-amber-300/80">Aguardando pagamento...</p>
-            {error ? <p className="text-sm text-red-300">{error}</p> : null}
+            <p style={{ margin: 0, textAlign: "center", fontSize: 12, color: "rgba(245,193,74,0.85)" }}>
+              Aguardando pagamento...
+            </p>
+            {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5" }}>{error}</p> : null}
           </div>
         )}
 
         {step === "paid" && (
-          <div className="space-y-4 py-4 text-center">
-            <h2 className="text-[22px] font-semibold text-white">Pagamento confirmado</h2>
-            <p className="text-sm text-white/65">
+          <div style={{ display: "grid", gap: 16, textAlign: "center", padding: "8px 0" }}>
+            <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700 }}>Pagamento confirmado</h2>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.65)" }}>
               Vamos enviar o acesso para <strong>{email}</strong>
               {phone ? ` e ${phone}` : ""}.
             </p>
