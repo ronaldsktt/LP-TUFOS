@@ -23,19 +23,10 @@ function maskPhone(value: string) {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-function maskCpf(value: string) {
-  const digits = onlyDigits(value).slice(0, 11);
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
-  if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
-  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
-}
-
 export function PixCheckout({ open, onClose }: Props) {
   const [step, setStep] = useState<Step>("form");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [cpf, setCpf] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [pixCode, setPixCode] = useState("");
@@ -95,7 +86,6 @@ export function PixCheckout({ open, onClose }: Props) {
         body: JSON.stringify({
           email,
           phone: onlyDigits(phone),
-          cpf: onlyDigits(cpf),
         }),
       });
       const data = (await response.json()) as { error?: string; pixCode?: string; identifier?: string };
@@ -173,20 +163,6 @@ export function PixCheckout({ open, onClose }: Props) {
                 placeholder="(11) 99999-9999"
               />
             </label>
-            <label className="block space-y-1.5">
-              <span className="text-[11px] uppercase tracking-widest text-amber-200/80">CPF</span>
-              <input
-                required
-                inputMode="numeric"
-                value={cpf}
-                onChange={(event) => setCpf(maskCpf(event.target.value))}
-                className="w-full rounded-md border border-white/10 bg-black/60 px-3 py-3 text-sm outline-none ring-amber-400/40 focus:ring-2"
-                placeholder="000.000.000-00"
-              />
-            </label>
-            <p className="text-[11px] text-white/40">
-              O CPF é exigido pela SyncPay para emitir o Pix.
-            </p>
             {error ? <p className="text-sm text-red-300">{error}</p> : null}
             <button
               type="submit"
