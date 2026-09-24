@@ -88,7 +88,7 @@ export async function sendMetaEvent({
         event_time: Math.floor(Date.now() / 1000),
         event_id: eventId,
         action_source: "website",
-        event_source_url: sourceUrl || "https://lp-tufos.vercel.app/",
+        event_source_url: sourceUrl || "https://www.secrettoons.online/",
         user_data: userData,
         custom_data: {
           currency: PRODUCT_CURRENCY,
