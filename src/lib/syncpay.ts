@@ -64,12 +64,6 @@ export type CashInInput = {
   amount: number;
   description: string;
   webhookUrl?: string;
-  client: {
-    name: string;
-    cpf: string;
-    email: string;
-    phone: string;
-  };
 };
 
 export type CashInResult = {
@@ -90,7 +84,6 @@ export async function createCashIn(input: CashInInput): Promise<CashInResult> {
       amount: input.amount,
       description: input.description,
       webhook_url: input.webhookUrl,
-      client: input.client,
     }),
   });
 
