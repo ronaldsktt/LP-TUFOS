@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PixCheckout } from "../components/PixCheckout";
 import { CLONE_BODY, CLONE_CSS } from "../clone-data";
+import { META_PIXEL_ID, trackMeta } from "../lib/meta-browser";
 const reviewImages = [
   "/clones/cmueqtwv600w5xt5bgb4bp3h3/reviews/dep02.jpg",
   "/clones/cmueqtwv600w5xt5bgb4bp3h3/reviews/dep03.jpg",
@@ -71,6 +72,9 @@ export const Route = createFileRoute("/")({
         type: "module",
         async: true,
       },
+      {
+        children: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');`,
+      },
     ],
   }),
   component: ClonePage,
@@ -91,6 +95,9 @@ function ClonePage() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   useEffect(() => {
+    void trackMeta("PageView");
+    void trackMeta("ViewContent");
+
     const videos = Array.from(document.querySelectorAll<HTMLVideoElement>("video"));
     const handlers: Array<[HTMLElement, (e: Event) => void]> = [];
 
@@ -268,6 +275,7 @@ function ClonePage() {
     const openCheckout = (event: Event) => {
       event.preventDefault();
       event.stopPropagation();
+      void trackMeta("InitiateCheckout");
       setCheckoutOpen(true);
     };
 
