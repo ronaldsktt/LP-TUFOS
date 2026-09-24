@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { sendMetaEvent, trackingFromRequest } from "../../lib/meta-capi";
 import { createCashIn } from "../../lib/syncpay";
 
-const PRODUCT_AMOUNT = 23.99;
+const PRODUCT_AMOUNT = 4;
 
 function digits(value: string) {
   return value.replace(/\D/g, "");
