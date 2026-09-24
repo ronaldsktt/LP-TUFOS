@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { sendMetaEvent, trackingFromRequest } from "../../lib/meta-capi";
+import { sendAccessEmail } from "../../lib/resend";
 import { getTransactionStatus } from "../../lib/syncpay";
 
 const PAID_STATUSES = new Set(["completed", "paid", "approved", "confirmed", "success"]);
@@ -43,6 +44,7 @@ export const Route = createFileRoute("/api/pix/purchase")({
             sourceUrl: new URL(request.url).origin,
             ...tracking,
           });
+          await sendAccessEmail(email, identifier).catch((error) => console.error(error));
 
           return Response.json({ ok: true });
         } catch (error) {
