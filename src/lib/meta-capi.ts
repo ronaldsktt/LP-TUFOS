@@ -71,27 +71,32 @@ export async function sendMetaEvent({
   if (fbp) userData.fbp = fbp;
   if (fbc) userData.fbc = fbc;
 
+  const testEventCode = process.env.META_TEST_EVENT_CODE?.trim() || "TEST13776";
+
+  const payload: Record<string, unknown> = {
+    data: [
+      {
+        event_name: eventName,
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: eventId,
+        action_source: "website",
+        event_source_url: sourceUrl || "https://lp-tufos.vercel.app/",
+        user_data: userData,
+        custom_data: {
+          currency: PRODUCT_CURRENCY,
+          value: PRODUCT_AMOUNT,
+          content_name: "Biblioteca VIP",
+          content_type: "product",
+        },
+      },
+    ],
+    test_event_code: testEventCode,
+  };
+
   const response = await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${token}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      data: [
-        {
-          event_name: eventName,
-          event_time: Math.floor(Date.now() / 1000),
-          event_id: eventId,
-          action_source: "website",
-          event_source_url: sourceUrl || "https://lp-tufos.vercel.app/",
-          user_data: userData,
-          custom_data: {
-            currency: PRODUCT_CURRENCY,
-            value: PRODUCT_AMOUNT,
-            content_name: "Biblioteca VIP",
-            content_type: "product",
-          },
-        },
-      ],
-    }),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
