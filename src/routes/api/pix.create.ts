@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { sendMetaEvent, trackingFromRequest } from "../../lib/meta-capi";
 import { createCashIn } from "../../lib/syncpay";
 
 const PRODUCT_AMOUNT = 23.99;
@@ -15,6 +16,8 @@ export const Route = createFileRoute("/api/pix/create")({
           const body = (await request.json()) as {
             email?: string;
             phone?: string;
+            fbp?: string;
+            fbc?: string;
           };
 
           const email = String(body.email ?? "").trim().toLowerCase();
@@ -33,6 +36,16 @@ export const Route = createFileRoute("/api/pix/create")({
             description: `Biblioteca VIP | ${email} | ${phone}`,
             webhookUrl: `${origin}/api/pix/webhook`,
           });
+
+          const tracking = trackingFromRequest(request, body);
+          await sendMetaEvent({
+            eventName: "InitiateCheckout",
+            eventId: `${result.identifier}:InitiateCheckout`,
+            email,
+            phone,
+            sourceUrl: origin,
+            ...tracking,
+          }).catch((error) => console.error(error));
 
           return Response.json({
             identifier: result.identifier,
