@@ -18,6 +18,15 @@ function onlyDigits(value: string) {
   return value.replace(/\D/g, "");
 }
 
+function readCookie(name: string) {
+  const raw = document.cookie.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${name}=`));
+  return raw ? decodeURIComponent(raw.slice(name.length + 1)) : "";
+}
+
+function metaCookies() {
+  return { fbp: readCookie("_fbp"), fbc: readCookie("_fbc") };
+}
+
 function maskPhone(value: string) {
   const digits = onlyDigits(value).slice(0, 11);
   if (digits.length <= 2) return digits;
@@ -127,6 +136,16 @@ export function PixCheckout({ open, onClose }: Props) {
         if (!cancelled && data.status === "completed") {
           setDeliveryUrl(data.deliveryUrl || "");
           setStep("paid");
+          void fetch("/api/pix/purchase", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              identifier,
+              email,
+              phone: onlyDigits(phone),
+              ...metaCookies(),
+            }),
+          });
         }
       } catch {
         // keep waiting
@@ -139,7 +158,7 @@ export function PixCheckout({ open, onClose }: Props) {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [open, step, identifier]);
+  }, [open, step, identifier, email, phone]);
 
   const qrUrl = useMemo(() => {
     if (!pixCode) return "";
@@ -159,6 +178,7 @@ export function PixCheckout({ open, onClose }: Props) {
         body: JSON.stringify({
           email,
           phone: onlyDigits(phone),
+          ...metaCookies(),
         }),
       });
       const data = (await response.json()) as { error?: string; pixCode?: string; identifier?: string };
@@ -237,61 +257,34 @@ export function PixCheckout({ open, onClose }: Props) {
         }}
         onClick={(event) => event.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Fechar"
-          style={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            width: 28,
-            height: 28,
-            border: 0,
-            background: "transparent",
-            color: "rgba(255,255,255,0.55)",
-            fontSize: 22,
-            lineHeight: "28px",
-            cursor: "pointer",
-          }}
-        >
+        <button type="button" onClick={onClose} aria-label="Fechar" style={{ position: "absolute", top: 16, right: 16, width: 28, height: 28, border: 0, background: "transparent", color: "rgba(255,255,255,0.55)", fontSize: 22, lineHeight: "28px", cursor: "pointer" }}>
           ×
         </button>
 
         {step === "form" && (
           <form onSubmit={(event) => void submit(event)} style={{ display: "grid", gap: 16 }} autoComplete="off">
             <div>
-              <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700, color: "#fff", textAlign: "center" }}>
-                Falta pouco para entrar!
-              </h2>
+              <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700, color: "#fff", textAlign: "center" }}>Falta pouco para entrar!</h2>
               <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)", textAlign: "center" }}>
                 Vamos enviar seu acesso no e-mail e WhatsApp informados.
               </p>
             </div>
-
             <label style={{ display: "grid", gap: 8, textAlign: "left" }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
-                E-mail
-              </span>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>E-mail</span>
               <div style={fieldBoxStyle}>
                 <input required type="text" inputMode="email" autoComplete="off" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="voce@email.com" style={fieldInputStyle} />
               </div>
             </label>
-
             <label style={{ display: "grid", gap: 8, textAlign: "left" }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
-                WhatsApp (com DDD)
-              </span>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>WhatsApp (com DDD)</span>
               <div style={fieldBoxStyle}>
                 <input required type="text" inputMode="tel" autoComplete="off" value={phone} onChange={(event) => setPhone(maskPhone(event.target.value))} placeholder="(11) 98765-4321" style={fieldInputStyle} />
               </div>
             </label>
-
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontSize: 15, color: "rgba(255,255,255,0.72)" }}>Total</span>
               <span style={{ fontSize: 20, fontWeight: 700, color: "#f5c14a" }}>{PRODUCT_PRICE}</span>
             </div>
-
             {error ? <p style={{ margin: 0, fontSize: 13, color: "#fca5a5", textAlign: "center" }}>{error}</p> : null}
             <GoldButton type="submit" disabled={loading}>{loading ? "Gerando Pix..." : "Gerar Pix"}</GoldButton>
             <p style={{ margin: 0, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 11, color: "rgba(255,255,255,0.42)", textAlign: "center" }}>
@@ -335,9 +328,7 @@ export function PixCheckout({ open, onClose }: Props) {
                 Vamos enviar o link para <strong>{email}</strong>{phone ? ` e ${phone}` : ""}.
               </p>
             )}
-            <button type="button" onClick={onClose} style={{ border: 0, background: "transparent", color: "rgba(255,255,255,0.55)", cursor: "pointer" }}>
-              Fechar
-            </button>
+            <button type="button" onClick={onClose} style={{ border: 0, background: "transparent", color: "rgba(255,255,255,0.55)", cursor: "pointer" }}>Fechar</button>
           </div>
         )}
       </div>
