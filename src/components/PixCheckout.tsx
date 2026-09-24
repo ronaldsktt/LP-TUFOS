@@ -28,19 +28,32 @@ function maskPhone(value: string) {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-const inputStyle: CSSProperties = {
+const fieldBoxStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
   width: "100%",
   height: 48,
+  boxSizing: "border-box",
   borderRadius: 10,
   border: "1px solid #2b3648",
   background: "#0b1220",
-  color: "#fff",
   padding: "0 14px",
+};
+
+const fieldInputStyle: CSSProperties = {
+  width: "100%",
+  height: "100%",
+  border: 0,
+  outline: "none",
+  background: "transparent",
+  boxShadow: "none",
+  color: "#fff",
   fontSize: 15,
   lineHeight: "20px",
-  outline: "none",
   textAlign: "left",
   fontFamily: "Inter, system-ui, sans-serif",
+  WebkitAppearance: "none",
+  appearance: "none",
 };
 
 function GoldButton({
@@ -183,7 +196,31 @@ export function PixCheckout({ open, onClose }: Props) {
       }}
       onClick={onClose}
     >
+      <style>{`
+        .pix-modal input,
+        .pix-modal input[type="text"],
+        .pix-modal input[type="email"],
+        .pix-modal input[type="tel"] {
+          all: unset !important;
+          display: block !important;
+          width: 100% !important;
+          height: 100% !important;
+          color: #fff !important;
+          font-size: 15px !important;
+          line-height: 20px !important;
+          text-align: left !important;
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+          outline: none !important;
+          font-family: Inter, system-ui, sans-serif !important;
+        }
+        .pix-modal input::placeholder {
+          color: rgba(255,255,255,0.38) !important;
+        }
+      `}</style>
       <div
+        className="pix-modal"
         style={{
           position: "relative",
           width: "min(100%, 400px)",
@@ -219,10 +256,10 @@ export function PixCheckout({ open, onClose }: Props) {
         </button>
 
         {step === "form" && (
-          <form onSubmit={(event) => void submit(event)} style={{ display: "grid", gap: 16 }}>
+          <form onSubmit={(event) => void submit(event)} style={{ display: "grid", gap: 16 }} autoComplete="off">
             <div>
               <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700, color: "#fff", textAlign: "center" }}>
-                Falta pouco pra entrar!
+                Falta pouco para entrar!
               </h2>
               <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.62)", textAlign: "center" }}>
                 Vamos enviar seu acesso no e-mail e WhatsApp informados.
@@ -230,17 +267,39 @@ export function PixCheckout({ open, onClose }: Props) {
             </div>
 
             <label style={{ display: "grid", gap: 8, textAlign: "left" }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "left" }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
                 E-mail
               </span>
-              <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="voce@email.com" style={inputStyle} />
+              <div style={fieldBoxStyle}>
+                <input
+                  required
+                  type="text"
+                  inputMode="email"
+                  autoComplete="off"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="voce@email.com"
+                  style={fieldInputStyle}
+                />
+              </div>
             </label>
 
             <label style={{ display: "grid", gap: 8, textAlign: "left" }}>
-              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", textAlign: "left" }}>
+              <span style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)" }}>
                 WhatsApp (com DDD)
               </span>
-              <input required inputMode="tel" value={phone} onChange={(event) => setPhone(maskPhone(event.target.value))} placeholder="(11) 98765-4321" style={inputStyle} />
+              <div style={fieldBoxStyle}>
+                <input
+                  required
+                  type="text"
+                  inputMode="tel"
+                  autoComplete="off"
+                  value={phone}
+                  onChange={(event) => setPhone(maskPhone(event.target.value))}
+                  placeholder="(11) 98765-4321"
+                  style={fieldInputStyle}
+                />
+              </div>
             </label>
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
