@@ -76,6 +76,17 @@ export const Route = createFileRoute("/")({
   component: ClonePage,
 });
 
+function isBuyCta(element: HTMLElement) {
+  const text = (element.innerText || element.textContent || "").toLowerCase();
+  return (
+    element.classList.contains("btn-compra") ||
+    element.classList.contains("btn-gold-v2") ||
+    text.includes("adquirir aplicativo") ||
+    text.includes("quero meu acesso") ||
+    text.includes("quero acesso")
+  );
+}
+
 function ClonePage() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
@@ -259,13 +270,15 @@ function ClonePage() {
       event.stopPropagation();
       setCheckoutOpen(true);
     };
-    const buyButtons = Array.from(document.querySelectorAll<HTMLElement>(".btn-compra"));
+
+    const buyButtons = Array.from(document.querySelectorAll<HTMLElement>("a, button")).filter(isBuyCta);
     for (const button of buyButtons) {
       button.addEventListener("click", openCheckout);
       if (button instanceof HTMLAnchorElement) {
         button.removeAttribute("target");
         button.setAttribute("href", "#comprar");
       }
+      button.style.cursor = "pointer";
       scrollCleanups.push(() => button.removeEventListener("click", openCheckout));
     }
 
