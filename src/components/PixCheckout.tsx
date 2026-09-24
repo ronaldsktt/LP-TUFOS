@@ -317,7 +317,10 @@ export function PixCheckout({ open, onClose }: Props) {
           <div style={{ display: "grid", gap: 16, textAlign: "center", padding: "8px 0" }}>
             <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700 }}>Pagamento confirmado</h2>
             <p style={{ margin: 0, fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.65)" }}>
-              Seu acesso foi liberado. Entre no grupo do Telegram para receber o conteúdo.
+              Seu acesso foi liberado. Enviamos o link também para {email || "seu e-mail"}.
+            </p>
+            <p style={{ margin: 0, fontSize: 13, lineHeight: "20px", color: "#f5c14a" }}>
+              Se não encontrar o e-mail, olhe a caixa de spam. O acesso pode estar lá.
             </p>
             {deliveryUrl ? (
               <a href={deliveryUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
