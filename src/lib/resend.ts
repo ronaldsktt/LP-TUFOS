@@ -8,7 +8,7 @@ export async function sendAccessEmail(email: string, identifier?: string) {
     return { skipped: true as const };
   }
 
-  const from = process.env.RESEND_FROM?.trim() || "Biblioteca VIP <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM?.trim() || "Biblioteca VIP <acesso@secrettoons.online>";
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
