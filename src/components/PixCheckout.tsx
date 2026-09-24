@@ -102,6 +102,7 @@ export function PixCheckout({ open, onClose }: Props) {
   const [pixCode, setPixCode] = useState("");
   const [identifier, setIdentifier] = useState("");
   const [copied, setCopied] = useState(false);
+  const [deliveryUrl, setDeliveryUrl] = useState("");
 
   useEffect(() => {
     if (!open) {
@@ -111,6 +112,7 @@ export function PixCheckout({ open, onClose }: Props) {
       setPixCode("");
       setIdentifier("");
       setCopied(false);
+      setDeliveryUrl("");
     }
   }, [open]);
 
@@ -121,8 +123,9 @@ export function PixCheckout({ open, onClose }: Props) {
     const tick = async () => {
       try {
         const response = await fetch(`/api/pix/status?id=${encodeURIComponent(identifier)}`);
-        const data = (await response.json()) as { status?: string };
+        const data = (await response.json()) as { status?: string; deliveryUrl?: string | null };
         if (!cancelled && data.status === "completed") {
+          setDeliveryUrl(data.deliveryUrl || "");
           setStep("paid");
         }
       } catch {
@@ -271,16 +274,7 @@ export function PixCheckout({ open, onClose }: Props) {
                 E-mail
               </span>
               <div style={fieldBoxStyle}>
-                <input
-                  required
-                  type="text"
-                  inputMode="email"
-                  autoComplete="off"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="voce@email.com"
-                  style={fieldInputStyle}
-                />
+                <input required type="text" inputMode="email" autoComplete="off" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="voce@email.com" style={fieldInputStyle} />
               </div>
             </label>
 
@@ -289,16 +283,7 @@ export function PixCheckout({ open, onClose }: Props) {
                 WhatsApp (com DDD)
               </span>
               <div style={fieldBoxStyle}>
-                <input
-                  required
-                  type="text"
-                  inputMode="tel"
-                  autoComplete="off"
-                  value={phone}
-                  onChange={(event) => setPhone(maskPhone(event.target.value))}
-                  placeholder="(11) 98765-4321"
-                  style={fieldInputStyle}
-                />
+                <input required type="text" inputMode="tel" autoComplete="off" value={phone} onChange={(event) => setPhone(maskPhone(event.target.value))} placeholder="(11) 98765-4321" style={fieldInputStyle} />
               </div>
             </label>
 
@@ -339,9 +324,20 @@ export function PixCheckout({ open, onClose }: Props) {
           <div style={{ display: "grid", gap: 16, textAlign: "center", padding: "8px 0" }}>
             <h2 style={{ margin: 0, fontSize: 24, lineHeight: "30px", fontWeight: 700 }}>Pagamento confirmado</h2>
             <p style={{ margin: 0, fontSize: 14, lineHeight: "20px", color: "rgba(255,255,255,0.65)" }}>
-              Vamos enviar o acesso para <strong>{email}</strong>{phone ? ` e ${phone}` : ""}.
+              Seu acesso foi liberado. Entre no grupo do Telegram para receber o conteúdo.
             </p>
-            <GoldButton onClick={onClose}>Fechar</GoldButton>
+            {deliveryUrl ? (
+              <a href={deliveryUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                <GoldButton>Entrar no Telegram</GoldButton>
+              </a>
+            ) : (
+              <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.55)" }}>
+                Vamos enviar o link para <strong>{email}</strong>{phone ? ` e ${phone}` : ""}.
+              </p>
+            )}
+            <button type="button" onClick={onClose} style={{ border: 0, background: "transparent", color: "rgba(255,255,255,0.55)", cursor: "pointer" }}>
+              Fechar
+            </button>
           </div>
         )}
       </div>
