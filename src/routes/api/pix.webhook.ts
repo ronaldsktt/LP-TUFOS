@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { sendMetaEvent } from "../../lib/meta-capi";
+import { sendAccessEmail } from "../../lib/resend";
 
 const PAID_STATUSES = new Set(["completed", "paid", "approved", "confirmed", "success"]);
 
@@ -32,14 +33,17 @@ export const Route = createFileRoute("/api/pix/webhook")({
 
           console.log("SyncPay webhook", JSON.stringify({ status, identifier, email, phone }));
 
-          if (identifier && email && phone && PAID_STATUSES.has(status)) {
-            await sendMetaEvent({
-              eventName: "Purchase",
-              eventId: `${identifier}:Purchase`,
-              email,
-              phone,
-              sourceUrl: new URL(request.url).origin,
-            }).catch((error) => console.error(error));
+          if (identifier && email && PAID_STATUSES.has(status)) {
+            if (phone) {
+              await sendMetaEvent({
+                eventName: "Purchase",
+                eventId: `${identifier}:Purchase`,
+                email,
+                phone,
+                sourceUrl: new URL(request.url).origin,
+              }).catch((error) => console.error(error));
+            }
+            await sendAccessEmail(email, identifier).catch((error) => console.error(error));
           }
         } catch {
           console.log("SyncPay webhook received a non-JSON body");
