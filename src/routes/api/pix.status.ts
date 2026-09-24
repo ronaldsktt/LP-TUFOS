@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getTransactionStatus } from "../../lib/syncpay";
 
+const PAID_STATUSES = new Set(["completed", "paid", "approved", "confirmed", "success"]);
+
 export const Route = createFileRoute("/api/pix/status")({
   server: {
     handlers: {
@@ -12,7 +14,12 @@ export const Route = createFileRoute("/api/pix/status")({
           }
 
           const result = await getTransactionStatus(identifier);
-          return Response.json(result);
+          const paid = PAID_STATUSES.has(result.status);
+          return Response.json({
+            ...result,
+            status: paid ? "completed" : result.status,
+            deliveryUrl: paid ? process.env.DELIVERY_TELEGRAM_URL?.trim() || null : null,
+          });
         } catch (error) {
           const message = error instanceof Error ? error.message : "Erro ao consultar Pix.";
           return Response.json({ error: message }, { status: 500 });
